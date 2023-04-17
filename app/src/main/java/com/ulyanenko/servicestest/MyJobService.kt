@@ -46,7 +46,7 @@ class MyJobService : JobService() {
 
 
     private fun log(msg: String) {
-        Log.d("SERVICE_TAG", "MyService: $msg")
+        Log.d("SERVICE_TAG", "MyJobService: $msg")
     }
 
 
