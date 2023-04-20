@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.ulyanenko.servicestest.databinding.ActivityMainBinding
 import kotlinx.coroutines.Job
 
@@ -19,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+    private var page =0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.foregroundService.setOnClickListener {
-          ContextCompat.startForegroundService(this, MyForegroundService.newIntent(this))
+            ContextCompat.startForegroundService(this, MyForegroundService.newIntent(this))
         }
 
         binding.intentService.setOnClickListener {
@@ -48,6 +52,21 @@ class MainActivity : AppCompatActivity() {
 
             val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
             jobScheduler.schedule(jobInfo)
+        }
+
+        binding.jobIntentService.setOnClickListener {
+            MyJobIntentService.enqueue(this, page)
+        }
+
+        binding.workManager.setOnClickListener {
+
+            val workManager = WorkManager.getInstance(applicationContext)
+
+            workManager.enqueueUniqueWork(
+                "work name",
+                ExistingWorkPolicy.APPEND,
+                MyWorker.makeRequest(page)
+            )
         }
     }
 
